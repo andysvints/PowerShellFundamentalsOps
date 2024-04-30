@@ -1,21 +1,38 @@
-#1 Recent Arrivals: Unique Packages
+1. Number of Items added recently
 SELECT COUNT(1) AS LatestTimestampItemCountFROM cWHERE c.LastUpdated = (SELECT VALUE MAX(c1.LastUpdated) FROM c c1)
- 
-#2 Discoverability: Non-empty ProjectUrl
-SELECT COUNT(1) AS NonEmptyProjectUrlItemCountFROM cWHERE IS_DEFINED(c.ProjectUrl) AND ARRAY_LENGTH(c.ProjectUrl) = 0WHERE IS_DEFINED(c.ProjectUrl) AND ARRAY_LENGTH(c.ProjectUrl) > 0
 
-#3 Visually Appealing: Non-empty IconURL
+2. Has ProjectUrl 
+SELECT COUNT(c.id) FROM c WHERE LENGTH(c.ProjectUrl)>0 or ARRAY_LENGTH(c.ProjectUrl)>0
+
+3. Has IconURL
 SELECT COUNT(1) AS NonEmptyIconUrlItemCountFROM cWHERE IS_DEFINED(c.IconUrl) AND ARRAY_LENGTH(c.IconUrl) = 0
 
-#4 License Please: Digital Consent Required 
+4. License Please 
 SELECT COUNT(1) AS ModulesRequiringLicenseAcceptance
 FROM c
 WHERE IS_DEFINED(c.RequireLicenseAcceptance) AND c.RequireLicenseAcceptance = 'true'
 
-#5 The File Maestro: Highest File Count
-SELECT TOP 1 c.Title AS ModuleTitle, c.FileCount AS HighestFileCount
-FROM c
-WHERE IS_DEFINED(c.FileCount)
-ORDER BY c.FileCount DESC
+4. File Maestro
+SELECT MAX(m.FileCount) FROM Modules mSELECT * FROM Modules m WHERE m.FileCount=8122
 
+6. Average Length of Description
+SELECT AVG(LENGTH(c.Description)) AS AverageDescriptionLength FROM c
 
+7. Modules without Dependencies
+SELECT Count(c.id) FROM c WHERE IS_DEFINED(c.Dependencies) = false OR TRIM(c.Dependencies) = ''
+
+8. Premier Dependency
+SELECT DISTINCT(c.Dependencies) FROM c WHERE TRIM(c.Dependencies) != ''SELECT COUNT(c.id) FROM c where CONTAINS(c.Dependencies,"Az.Accounts")
+
+9. Peak Collaboration
+1) SELECT MAX(m.OwnersCount) AS Owners FROM Modules m
+2)SELECT m.id, m.OwnersCount FROM Modules m where m.OwnersCount=10
+
+10. The Tag Titan
+SELECT MAX(m.TagsCount) AS Tags FROM Modules m
+SELECT m.id, m.TagsCount,m.Tags FROM Modules m where m.TagsCount=10402
+
+11. Pillars of Transparency
+SELECT  COUNT(c.id) FROM c WHERE LENGTH(c.LicenseUrl)>0 or ARRAY_LENGTH(c.LicenseUrl)>0
+
+12. 

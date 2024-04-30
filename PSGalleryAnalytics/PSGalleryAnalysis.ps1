@@ -49,6 +49,7 @@ function Invoke-PSGalleryModulesProcessing
         {
             $count=1
             $PSGalleryResp=(Invoke-WebRequest -Uri $URL).Content
+
             $PSGalleryLatestModuleVersion=[System.Xml.XmlDocument]$PSGalleryResp
             foreach($module in $($PSGalleryLatestModuleVersion.feed.entry.properties)){
                 $count++
@@ -71,7 +72,10 @@ function Invoke-PSGalleryModulesProcessing
                 LicenseUrl,ItemType,FileList,@{l="FileCount";e={$_.FileList.split('|').count}},GUID,PowerShellVersion,
                 DotNetFrameworkVersion,CLRVersion,ProcessorArchitecture,CompanyName,Owners,@{l="OwnersCount";e={$_.Owners.split(',').count}}
                 | ConvertTo-Json)
-                New-CosmosDbDocument -Context $cosmosDbContext -CollectionId 'psgallery' -DocumentBody $doc  -PartitionKey "$($module.id.tostring())"
+                
+#TODO: ADD EXPONENTIAL BACKOFF AND RETRY
+
+New-CosmosDbDocument -Context $cosmosDbContext -CollectionId 'psgallery' -DocumentBody $doc  -PartitionKey "$($module.id.tostring())"
             }
 
             if($PSGalleryLatestModuleVersion.feed.link.href.count -eq 2){
@@ -124,8 +128,10 @@ foreach($module in $($PSGalleryLatestModuleVersion.feed.entry.properties)){
 }
 #>
 
-#Invoke-PSGalleryModulesProcessing -URL 'https://www.powershellgallery.com/api/v2/Packages()?$filter=IsLatestVersion%20eq%20true&$skip=9366' -Verbose
+#Invoke-PSGalleryModulesProcessing -URL 'https://www.powershellgallery.com/api/v2/Packages()?$filter=IsLatestVersion%20eq%20true&$skip=12200' -Verbose
 
+
+#add exponential back off 
 
 Invoke-PSGalleryModulesProcessing -URL 'https://www.powershellgallery.com/api/v2/Packages()?$filter=IsLatestVersion%20eq%20true' -Verbose
 
