@@ -1,4 +1,5 @@
 1. Number of Items added recently
+
 SELECT COUNT(1) AS LatestTimestampItemCountFROM cWHERE c.LastUpdated = (SELECT VALUE MAX(c1.LastUpdated) FROM c c1)
 
 2. Has ProjectUrl 
@@ -7,13 +8,12 @@ SELECT COUNT(c.id) FROM c WHERE LENGTH(c.ProjectUrl)>0 or ARRAY_LENGTH(c.Project
 3. Has IconURL
 SELECT COUNT(1) AS NonEmptyIconUrlItemCountFROM cWHERE IS_DEFINED(c.IconUrl) AND ARRAY_LENGTH(c.IconUrl) = 0
 
-4. License Please 
+4. 
 SELECT COUNT(1) AS ModulesRequiringLicenseAcceptance
 FROM c
 WHERE IS_DEFINED(c.RequireLicenseAcceptance) AND c.RequireLicenseAcceptance = 'true'
 
-4. File Maestro
-SELECT MAX(m.FileCount) FROM Modules mSELECT * FROM Modules m WHERE m.FileCount=8122
+5. File MaestroSELECT MAX(m.FileCount) FROM Modules mSELECT * FROM Modules m WHERE m.FileCount=8122
 
 6. Average Length of Description
 SELECT AVG(LENGTH(c.Description)) AS AverageDescriptionLength FROM c
@@ -24,15 +24,34 @@ SELECT Count(c.id) FROM c WHERE IS_DEFINED(c.Dependencies) = false OR TRIM(c.Dep
 8. Premier Dependency
 SELECT DISTINCT(c.Dependencies) FROM c WHERE TRIM(c.Dependencies) != ''SELECT COUNT(c.id) FROM c where CONTAINS(c.Dependencies,"Az.Accounts")
 
-9. Peak Collaboration
-1) SELECT MAX(m.OwnersCount) AS Owners FROM Modules m
-2)SELECT m.id, m.OwnersCount FROM Modules m where m.OwnersCount=10
+9. Peak Collaboration1) 
+SELECT MAX(m.OwnersCount) AS Owners FROM Modules m2)SELECT m.id, m.OwnersCount FROM Modules m where m.OwnersCount=10
 
 10. The Tag Titan
-SELECT MAX(m.TagsCount) AS Tags FROM Modules m
-SELECT m.id, m.TagsCount,m.Tags FROM Modules m where m.TagsCount=10402
+SELECT MAX(m.TagsCount) AS Tags FROM Modules mSELECT m.id, m.TagsCount,m.Tags FROM Modules m where m.TagsCount=10402
 
 11. Pillars of Transparency
 SELECT  COUNT(c.id) FROM c WHERE LENGTH(c.LicenseUrl)>0 or ARRAY_LENGTH(c.LicenseUrl)>0
 
-12. 
+12. Scripts in the Wild
+SELECT COUNT(c.id) FROM c WHERE c.ItemType='Script'
+
+13. DSC Chronicles
+SELECT COUNT(c.id) AS DSCRelatedModules FROM c WHERE CONTAINS(c.Tags,"DesiredStateConfiguration") OR CONTAINS(c.Tags,"DSC") OR CONTAINS(c.Tags,"DSCResource")
+
+14. Average Module Downloads
+SELECT AVG(StringToNumber(c.DownloadCount)) FROM c15. King of DownloadsSELECT MAX(StringToNumber(c.DownloadCount)) FROM c
+
+16. API Wrappers
+SELECT COUNT(c.id) FROM c where CONTAINS(c.Description, "API") or CONTAINS(c.id, "API") or CONTAINS(c.Tags, "API")
+
+17. Heavyweight Champion
+SELECT MAX(StringToNumber(c.PackageSize)) FROM c
+
+18. Balancing the Scales
+SELECT AVG(StringToNumber(c.PackageSize)) FROM c
+
+19. Grand Storyteller
+SELECT MAX(LENGTH(c.Description)) FROM c
+
+20. 
