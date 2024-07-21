@@ -98,11 +98,14 @@ New-CosmosDbDocument -Context $cosmosDbContext -CollectionId 'psgallery' -Docume
 #Get 1st 100 items
 #$PSGalleryResp=(Invoke-WebRequest -Uri "https://www.powershellgallery.com/api/v2/Packages()?`$filter=IsLatestVersion%20eq%20true").Content
 
+Import-Module CosmosDB
+#https://www.powershellgallery.com/packages/CosmosDB
 
 $resourceGroupName = "CosmosDB-Rg"
 $cosmosDbAccountName = "andysdb"
 $databaseName = "psgallerystats"
-Connect-AzAccount
+Connect-AzAccount -Tenant "1687efe7-c70e-4095-a272-fbba59d3d524"
+#Connect-AzAccount
 $cosmosDbContext = New-CosmosDbContext -Account $cosmosDbAccountName -Database $databaseName -ResourceGroup $resourceGroupName 
 
 #Process 1st 100
@@ -128,7 +131,7 @@ foreach($module in $($PSGalleryLatestModuleVersion.feed.entry.properties)){
 }
 #>
 
-#Invoke-PSGalleryModulesProcessing -URL 'https://www.powershellgallery.com/api/v2/Packages()?$filter=IsLatestVersion%20eq%20true&$skip=7291' -Verbose
+#Invoke-PSGalleryModulesProcessing -URL 'https://www.powershellgallery.com/api/v2/Packages()?$filter=IsLatestVersion%20eq%20true&$skip=8150' -Verbose
 
 
 #add exponential back off 

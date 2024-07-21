@@ -1,34 +1,40 @@
-1. Number of Items added recently
+1. #1 Recent Arrivals: Unique Packages
 
-SELECT COUNT(1) AS LatestTimestampItemCountFROM cWHERE c.LastUpdated = (SELECT VALUE MAX(c1.LastUpdated) FROM c c1)
+SELECT COUNT(1) AS LatestTimestampItemCountFROM c
+WHERE c.LastUpdated = (SELECT VALUE MAX(c1.LastUpdated) FROM c c1)
 
-2. Has ProjectUrl 
+2. #2 Discoverability: Non-empty ProjectUrl 
 SELECT COUNT(c.id) FROM c WHERE LENGTH(c.ProjectUrl)>0 or ARRAY_LENGTH(c.ProjectUrl)>0
 
-3. Has IconURL
+3. #3 Visually Appealing: Non-empty IconURL
 SELECT COUNT(1) AS NonEmptyIconUrlItemCountFROM cWHERE IS_DEFINED(c.IconUrl) AND ARRAY_LENGTH(c.IconUrl) = 0
 
-4. 
+4. #4 License Please: Digital Consent Required
 SELECT COUNT(1) AS ModulesRequiringLicenseAcceptance
 FROM c
 WHERE IS_DEFINED(c.RequireLicenseAcceptance) AND c.RequireLicenseAcceptance = 'true'
 
-5. File MaestroSELECT MAX(m.FileCount) FROM Modules mSELECT * FROM Modules m WHERE m.FileCount=8122
+5. #5 The File Maestro: Highest File Count
+SELECT MAX(m.FileCount) FROM Modules m
+SELECT * FROM Modules m WHERE m.FileCount=8122
 
-6. Average Length of Description
+6. #6 Words Count: Average Description Length
 SELECT AVG(LENGTH(c.Description)) AS AverageDescriptionLength FROM c
 
 7. Modules without Dependencies
 SELECT Count(c.id) FROM c WHERE IS_DEFINED(c.Dependencies) = false OR TRIM(c.Dependencies) = ''
 
 8. Premier Dependency
-SELECT DISTINCT(c.Dependencies) FROM c WHERE TRIM(c.Dependencies) != ''SELECT COUNT(c.id) FROM c where CONTAINS(c.Dependencies,"Az.Accounts")
+SELECT DISTINCT(c.Dependencies) FROM c WHERE TRIM(c.Dependencies) != ''
+SELECT COUNT(c.id) FROM c where CONTAINS(c.Dependencies,"Az.Accounts")
 
 9. Peak Collaboration1) 
-SELECT MAX(m.OwnersCount) AS Owners FROM Modules m2)SELECT m.id, m.OwnersCount FROM Modules m where m.OwnersCount=10
+SELECT MAX(m.OwnersCount) AS Owners FROM Modules m
+SELECT m.id, m.OwnersCount FROM Modules m where m.OwnersCount=10
 
 10. The Tag Titan
-SELECT MAX(m.TagsCount) AS Tags FROM Modules mSELECT m.id, m.TagsCount,m.Tags FROM Modules m where m.TagsCount=10402
+SELECT MAX(m.TagsCount) AS Tags FROM Modules m
+SELECT m.id, m.TagsCount,m.Tags FROM Modules m where m.TagsCount=10402
 
 11. Pillars of Transparency
 SELECT  COUNT(c.id) FROM c WHERE LENGTH(c.LicenseUrl)>0 or ARRAY_LENGTH(c.LicenseUrl)>0
@@ -40,7 +46,11 @@ SELECT COUNT(c.id) FROM c WHERE c.ItemType='Script'
 SELECT COUNT(c.id) AS DSCRelatedModules FROM c WHERE CONTAINS(c.Tags,"DesiredStateConfiguration") OR CONTAINS(c.Tags,"DSC") OR CONTAINS(c.Tags,"DSCResource")
 
 14. Average Module Downloads
-SELECT AVG(StringToNumber(c.DownloadCount)) FROM c15. King of DownloadsSELECT MAX(StringToNumber(c.DownloadCount)) FROM c
+SELECT AVG(StringToNumber(c.DownloadCount)) FROM c
+
+15. King of Downloads
+SELECT MAX(StringToNumber(c.DownloadCount)) FROM c
+SELECT c.id FROM c Where StringToNumber(c.DownloadCount)=671342669
 
 16. API Wrappers
 SELECT COUNT(c.id) FROM c where CONTAINS(c.Description, "API") or CONTAINS(c.id, "API") or CONTAINS(c.Tags, "API")
@@ -53,5 +63,11 @@ SELECT AVG(StringToNumber(c.PackageSize)) FROM c
 
 19. Grand Storyteller
 SELECT MAX(LENGTH(c.Description)) FROM c
+SELECT c.id FROM c where LENGTH(c.Description)=3636
 
-20. 
+20. GitHub Bound
+SELECT COUNT(c.id) FROM c WHERE CONTAINS(c.ProjectUrl,"github") / #2
+
+21. Average Number of Owners
+
+22.
