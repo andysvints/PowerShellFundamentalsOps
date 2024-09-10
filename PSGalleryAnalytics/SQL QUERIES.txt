@@ -6,6 +6,8 @@ WHERE c.LastUpdated = (SELECT VALUE MAX(c1.LastUpdated) FROM c c1)
 2. #2 Discoverability: Non-empty ProjectUrl 
 SELECT COUNT(c.id) FROM c WHERE LENGTH(c.ProjectUrl)>0 or ARRAY_LENGTH(c.ProjectUrl)>0
 
+SELECT COUNT(c.id) FROM c WHERE c.Scoring.Details.Metadata.ProjectUrl=1
+
 3. #3 Visually Appealing: Non-empty IconURL
 SELECT COUNT(1) AS NonEmptyIconUrlItemCountFROM cWHERE IS_DEFINED(c.IconUrl) AND ARRAY_LENGTH(c.IconUrl) = 0
 
@@ -50,7 +52,7 @@ SELECT AVG(StringToNumber(c.DownloadCount)) FROM c
 
 15. King of Downloads
 SELECT MAX(StringToNumber(c.DownloadCount)) FROM c
-SELECT c.id FROM c Where StringToNumber(c.DownloadCount)=671342669
+SELECT c.id FROM c Where StringToNumber(c.DownloadCount)=710715191
 
 16. API Wrappers
 SELECT COUNT(c.id) FROM c where CONTAINS(c.Description, "API") or CONTAINS(c.id, "API") or CONTAINS(c.Tags, "API")
