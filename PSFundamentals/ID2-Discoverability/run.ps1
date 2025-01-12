@@ -22,6 +22,7 @@ $branch = $env:GitHubBranch
 $Date=$(get-date -Format MM/dd/yyyy)
 $indexFilePath = "index.html"
 $postFilePath="_posts/2024-02-13-Discoverability.html"
+$recentArrivalsFilePath="_posts\2024-02-14-recent-arrivals.html"
 $commitMessage = "$Date update post#2"
 
 $headers = @{
@@ -40,7 +41,12 @@ $headers = @{
     Accept = "application/vnd.github.raw+json"
 }
 $response = Invoke-RestMethod -Uri $postApiUrl -Headers $headers -Method Get
+$recentArrivalsResponse = Invoke-RestMethod -Uri $recentArrivalsApiUrl -Headers $headers -Method Get
+$recentArrivalsResponse=$recentArrivalsResponse | ConvertFrom-Html
 
+$recentArrivalsSynopsisNode = $recentArrivalsResponse.SelectNodes("//dl[@class='synopsis']")[0]
+
+$recentArrivalsValue = $recentArrivalsSynopsisNode.SelectSingleNode("dd").InnerText
 #Update post content here
 ############################
 

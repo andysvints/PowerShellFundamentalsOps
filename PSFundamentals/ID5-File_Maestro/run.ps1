@@ -21,6 +21,7 @@ $branch = $env:GitHubBranch
 $Date=$(get-date -Format MM/dd/yyyy)
 $indexFilePath = "index.html"
 $postFilePath="_posts\2024-02-10-file-maestro.html"
+
 $commitMessage = "$Date update post#5"
 
 $headers = @{
@@ -33,12 +34,14 @@ $postApiUrl = "https://api.github.com/repos/$owner/$repo/contents/$($postFilePat
 $response = Invoke-RestMethod -Uri $postApiUrl -Headers $headers -Method Get
 $postSha = $response.sha
 
+$recentArrivalsApiUrl = "https://api.github.com/repos/$owner/$repo/contents/$($recentArrivalsFilePath)?ref=$($branch)"
 #Get post file content
 $headers = @{
     Authorization = "Bearer $githubToken"
     Accept = "application/vnd.github.raw+json"
 }
 $response = Invoke-RestMethod -Uri $postApiUrl -Headers $headers -Method Get
+
 $Synopsis="$($FileMaestro.id) by $($FileMaestro.CompanyName)"
 $SynopsisNode = [HtmlAgilityPack.HtmlNode]::CreateNode("<dt>$Synopsis</dt>")
 $FilesNode=[HtmlAgilityPack.HtmlNode]::CreateNode(" <dd>$($FileMaestro.FileCount) files</dd>")
@@ -56,6 +59,7 @@ $dataPointCount = ([regex]::Matches($response, '<div class="data-point"')).Count
     $dataValue=95
     $lineSegment = "<div class=`"line-segment`" style=`"--hypotenuse: 40; --angle:$($oldY-$y);`"></div>"
     $response=$response | ConvertFrom-Html
+
     $response.SelectNodes("//dt")[0].ParentNode.ReplaceChild($SynopsisNode,$response.SelectNodes("//dt")[0])
     $response.SelectNodes("//dd")[0].ParentNode.ReplaceChild($FilesNode,$response.SelectNodes("//dd")[0])
     $liNodes = $response.SelectNodes("//li")
