@@ -12,17 +12,16 @@ if ($Timer.IsPastDue) {
 # Write an information log with the current time.
 Write-Host "PowerShell timer trigger function ran! TIME: $currentUTCtime"
 
-$RecentArrivals=$PSDocuments | ConvertTo-Json -Depth 10
-
+$FileMaestro=$PSDocuments
 $githubToken = Get-AzKeyVaultSecret -VaultName "PSFundamentals-KV" -Name "GitHubPAT" -AsPlainText
-
+Import-Module PowerHTML -Verbose
 $owner = $env:GitHubUser
 $repo = $env:GitHubRepo
 $branch = $env:GitHubBranch
 $Date=$(get-date -Format MM/dd/yyyy)
 $indexFilePath = "index.html"
-$postFilePath="_posts/2024-02-14-recent-arrivals.html"
-$commitMessage = "$Date update post#1"
+$postFilePath="_posts\2024-02-10-file-maestro.html"
+$commitMessage = "$Date update post#5"
 
 $headers = @{
     Authorization = "Bearer $githubToken"
@@ -40,12 +39,12 @@ $headers = @{
     Accept = "application/vnd.github.raw+json"
 }
 $response = Invoke-RestMethod -Uri $postApiUrl -Headers $headers -Method Get
-
+$Synopsis="$($FileMaestro.id) by $($FileMaestro.CompanyName)"
+$SynopsisNode = [HtmlAgilityPack.HtmlNode]::CreateNode("<dt>$Synopsis</dt>")
+$FilesNode=[HtmlAgilityPack.HtmlNode]::CreateNode(" <dd>$($FileMaestro.FileCount) files</dd>")
 #Update post content here
-$response=$response -replace '<dd>\d+</dd>',"<dd>$RecentArrivals</dd>"
 $response=$response -replace '<dd>\d{2}/\d{2}/\d{4}</dd>', "<dd>$Date</dd>"
 $dataPointCount = ([regex]::Matches($response, '<div class="data-point"')).Count
-
 
 #if($dataPointCount -lt 12){
     #just append at the bottom
@@ -53,17 +52,19 @@ $dataPointCount = ([regex]::Matches($response, '<div class="data-point"')).Count
     $latestLi = $matches[$matches.Count - 1].Value
     $x=40+(($latestLi -split ':') -split ';')[1].Replace('px',"").Trim()
     $oldY=(($latestLi -split ':') -split ';')[3].Replace('px',"").Trim()
-    $y=$RecentArrivals/100
+    $y=$($FileMaestro.FileCount)/100
     $dataValue=95
     $lineSegment = "<div class=`"line-segment`" style=`"--hypotenuse: 40; --angle:$($oldY-$y);`"></div>"
     $response=$response | ConvertFrom-Html
+    $response.SelectNodes("//dt")[0].ParentNode.ReplaceChild($SynopsisNode,$response.SelectNodes("//dt")[0])
+    $response.SelectNodes("//dd")[0].ParentNode.ReplaceChild($FilesNode,$response.SelectNodes("//dd")[0])
     $liNodes = $response.SelectNodes("//li")
     $lineSegmentNode = [HtmlAgilityPack.HtmlNode]::CreateNode($linesegment)
     $liNodes[-1].AppendChild($lineSegmentNode)
     $newEntry=@"
 <li style="--x: $($x)px; --y: $($y)px;">
             <div class="data-point" data-value="$($dataValue)">
-              <span class="tooltiptext">$RecentArrivals</span>
+              <span class="tooltiptext">$($FileMaestro.FileCount)</span>
               <p>
                 $(get-date -Format MMM-yy)
               </p>
@@ -100,4 +101,3 @@ $response = Invoke-WebRequest -Uri $commitUrl -Headers $headers -Method Put -Bod
 #fetch index page
 #update it
 #commit changes
-

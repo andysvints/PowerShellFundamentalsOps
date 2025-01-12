@@ -1,0 +1,20 @@
+{
+  "bindings": [
+    {
+      "name": "Timer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 0 0 2 * *"
+    },
+    { 
+    "name": "PSDocuments", 
+    "type": "cosmosDB", 
+    "direction": "in", 
+    "databaseName": "psgallerystats", 
+    "containerName": "psgallery", 
+    "sqlQuery": "SELECT TOP 1 m.id,m.CompanyName,m.FileCount FROM Modules m ORDER BY m.FileCount DESC", 
+    "connection": "CosmosDB",
+    "identity": "systemAssigned"
+  }
+  ]
+}
