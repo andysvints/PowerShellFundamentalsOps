@@ -12,7 +12,7 @@
     "direction": "in", 
     "databaseName": "psgallerystats", 
     "containerName": "psgallery", 
-    "sqlQuery": "SELECT TOP 1 m.id,m.CompanyName,m.FileCount FROM Modules m ORDER BY m.FileCount DESC", 
+    "sqlQuery": "SELECT COUNT(c.id) FROM c WHERE LENGTH(c.ProjectUrl)>0 or ARRAY_LENGTH(c.ProjectUrl)>0", 
     "connection": "CosmosDB",
     "identity": "systemAssigned"
   }

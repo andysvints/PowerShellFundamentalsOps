@@ -1,5 +1,5 @@
 # Input bindings are passed in via param block.
-param($Timer)
+param($Timer, $PSDocuments)
 
 # Get the current universal time in the default string format
 $currentUTCtime = (Get-Date).ToUniversalTime()
@@ -22,7 +22,7 @@ $branch = $env:GitHubBranch
 $Date=$(get-date -Format MM/dd/yyyy)
 $indexFilePath = "index.html"
 $postFilePath="_posts/2024-02-13-Discoverability.html"
-$recentArrivalsFilePath="_posts\2024-02-14-recent-arrivals.html"
+$recentArrivalsFilePath="_posts/2024-02-14-recent-arrivals.html"
 $commitMessage = "$Date update post#2"
 
 $headers = @{
@@ -34,7 +34,7 @@ $headers = @{
 $postApiUrl = "https://api.github.com/repos/$owner/$repo/contents/$($postFilePath)?ref=$($branch)"
 $response = Invoke-RestMethod -Uri $postApiUrl -Headers $headers -Method Get
 $postSha = $response.sha
-
+$recentArrivalsApiUrl = "https://api.github.com/repos/$owner/$repo/contents/$($recentArrivalsFilePath)?ref=$($branch)"
 #Get post file content
 $headers = @{
     Authorization = "Bearer $githubToken"
@@ -48,8 +48,42 @@ $recentArrivalsSynopsisNode = $recentArrivalsResponse.SelectNodes("//dl[@class='
 
 $recentArrivalsValue = $recentArrivalsSynopsisNode.SelectSingleNode("dd").InnerText
 #Update post content here
+#[Math]::Round((8732/13506)*100)
 ############################
+$response=$response -replace '<dd>\d+(\.\d+)?%</dd>',"<dd>$([Math]::Round(($HasProjectUrl/$recentArrivalsValue)*100,2))%</dd>"
+$response=$response -replace '<dd>\d{2}/\d{2}/\d{4}</dd>', "<dd>$Date</dd>"
+$response=$response -replace '<dt>\d+.*?</dt>',"<dt>AAAAAAAAA</d>"
 
+$dataPointCount = ([regex]::Matches($response, '<div class="data-point"')).Count
+
+$matches = [regex]::Matches($response, '<li style="--x: \d+px; --y: \d+\.?\d*px;">.*?')
+$latestLi = $matches[$matches.Count - 1].Value
+$x=40+(($latestLi -split ':') -split ';')[1].Replace('px',"").Trim()
+$oldY=(($latestLi -split ':') -split ';')[3].Replace('px',"").Trim()
+$y=$HasProjectUrl/100
+$dataValue=25
+$lineSegment = "<div class=`"line-segment`" style=`"--hypotenuse: 40; --angle:$($oldY-$y);`"></div>"
+$response=$response | ConvertFrom-Html
+$liNodes = $response.SelectNodes("//li")
+$lineSegmentNode = [HtmlAgilityPack.HtmlNode]::CreateNode($linesegment)
+$liNodes[-1].AppendChild($lineSegmentNode)
+$newEntry=@"
+<li style="--x: $($x)px; --y: $($y)px;">
+            <div class="data-point" data-value="$($dataValue)">
+              <span class="tooltiptext">$HasProjectUrl</span>
+              <p>
+                $(get-date -Format MMM-yy)
+              </p>
+            </div>
+          </li>
+"@
+$newEntryNode = [HtmlAgilityPack.HtmlNode]::CreateNode($newEntry)
+$liNodes[-1].ParentNode.AppendChild($newEntryNode)
+#}
+if ($dataPointCount -ge 12) {
+    <# remove 1st #>
+    $liNodes.RemoveAt(0)
+}
 ############################
 
 #commit changes

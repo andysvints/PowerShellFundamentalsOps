@@ -73,7 +73,7 @@ $dataPointCount = ([regex]::Matches($response, '<div class="data-point"')).Count
 $newEntryNode = [HtmlAgilityPack.HtmlNode]::CreateNode($newEntry)
 $liNodes[-1].ParentNode.AppendChild($newEntryNode)
 #}
-if ($dataPointCount -eq 12) {
+if ($dataPointCount -ge 12) {
     <# remove 1st #>
     $liNodes.RemoveAt(0)
 }
