@@ -52,7 +52,7 @@ $recentArrivalsValue = $recentArrivalsSynopsisNode.SelectSingleNode("dd").InnerT
 ############################
 $response=$response -replace '<dd>\d+(\.\d+)?%</dd>',"<dd>$([Math]::Round(($HasProjectUrl/$recentArrivalsValue)*100,2))%</dd>"
 $response=$response -replace '<dd>\d{2}/\d{2}/\d{4}</dd>', "<dd>$Date</dd>"
-$response=$response -replace '<dt>\d+.*?</dt>',"<dt>AAAAAAAAA</d>"
+$response=$response -replace '<dt>\d+.*?</dt>',"<dt>$HasProjectUrl modules stand out, they come with a ProjectUrl — an extra layer of understanding and context with use cases, documentation, and more.</d>"
 
 $dataPointCount = ([regex]::Matches($response, '<div class="data-point"')).Count
 
