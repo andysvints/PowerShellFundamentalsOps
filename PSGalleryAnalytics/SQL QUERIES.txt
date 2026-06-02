@@ -60,9 +60,11 @@ SELECT COUNT(c.id) FROM c where CONTAINS(c.Description, "API") or CONTAINS(c.id,
 17. Heavyweight Champion
 SELECT MAX(StringToNumber(c.PackageSize)) FROM c
 SELECT c.id, c.PackageSize FROM c WHERE c.PackageSize="255861306"
+#size in bytes
 
 18. Balancing the Scales
-SELECT AVG(StringToNumber(c.PackageSize)) FROM c
+SELECT AVG(StringToNumber(c.PackageSize)) FROM c 
+#size in bytes
 
 19. Grand Storyteller
 SELECT MAX(LENGTH(c.Description)) FROM c
