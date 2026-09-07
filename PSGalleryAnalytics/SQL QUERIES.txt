@@ -61,6 +61,7 @@ SELECT COUNT(c.id) FROM c where CONTAINS(c.Description, "API") or CONTAINS(c.id,
 SELECT MAX(StringToNumber(c.PackageSize)) FROM c
 SELECT c.id, c.PackageSize FROM c WHERE c.PackageSize="255861306"
 #size in bytes
+#https://filesizeconverter.com/bytes-to-mb-converter
 
 18. Balancing the Scales
 SELECT AVG(StringToNumber(c.PackageSize)) FROM c 
